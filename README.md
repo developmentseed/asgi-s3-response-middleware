@@ -10,7 +10,7 @@
 
 <!-- **Documentation**: <a href="TODO..." target="_blank">TODO...</a> -->
 
-**Source Code**: <a href="https://github.com/developmentseed/asgi-s3-response-middleware" target="_blank">https://github.com/developmentseed/asgi_s3_response_middleware</a>
+**Source Code**: <a href="https://github.com/developmentseed/asgi-s3-response-middleware" target="_blank">https://github.com/developmentseed/asgi-s3-response-middleware</a>
 
 ---
 
