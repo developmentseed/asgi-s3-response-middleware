@@ -27,9 +27,11 @@ class S3ResponseMiddleware:
             return await self.app(scope, receive, send)
 
         s3_key = None  # Persist key across header & body messages
+        s3_headers = {}  # Persist headers across header & body messages
 
         async def send_with_s3_response(message: Message):
             nonlocal s3_key
+            nonlocal s3_headers
 
             if message["type"] == "http.response.start":
                 headers = MutableHeaders(scope=message)
@@ -43,6 +45,16 @@ class S3ResponseMiddleware:
                         self.size_threshold,
                     )
                     s3_key = self.key_generator()
+                    s3_headers = {
+                        f"Content{key.title()}": headers[f"content-{key}"]
+                        for key in [
+                            "type",
+                            "encoding",
+                            "language",
+                            "disposition",
+                        ]
+                        if f"content-{key}" in headers
+                    }
                     message["status"] = 303
                     headers["content-length"] = "0"
                     headers["location"] = self.s3_client.generate_presigned_url(
@@ -50,18 +62,6 @@ class S3ResponseMiddleware:
                         Params={
                             "Bucket": self.s3_bucket_name,
                             "Key": s3_key,
-                            **{
-                                f"ResponseContent{key.title()}": headers[
-                                    f"content-{key}"
-                                ]
-                                for key in [
-                                    "type",
-                                    "encoding",
-                                    "language",
-                                    "disposition",
-                                ]
-                                if f"content-{key}" in headers
-                            },
                         },
                         ExpiresIn=self.url_expiry,
                     )
@@ -78,6 +78,7 @@ class S3ResponseMiddleware:
                         Bucket=self.s3_bucket_name,
                         Key=s3_key,
                         Body=message["body"],
+                        **s3_headers,
                     )
                     message = {"type": "http.response.body", "body": b""}
 
