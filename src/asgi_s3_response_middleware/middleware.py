@@ -50,6 +50,18 @@ class S3ResponseMiddleware:
                         Params={
                             "Bucket": self.s3_bucket_name,
                             "Key": s3_key,
+                            **{
+                                f"ResponseContent{key.title()}": headers[
+                                    f"content-{key}"
+                                ]
+                                for key in [
+                                    "type",
+                                    "encoding",
+                                    "language",
+                                    "disposition",
+                                ]
+                                if f"content-{key}" in headers
+                            },
                         },
                         ExpiresIn=self.url_expiry,
                     )
