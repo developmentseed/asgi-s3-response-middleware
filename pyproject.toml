@@ -1,0 +1,50 @@
+[build-system]
+build-backend = "pdm.pep517.api"
+requires = ["pdm-pep517"]
+
+[project]
+authors = [
+  {name = "Anthony Lukach", email = "anthony@developmentseed.org"},
+]
+dependencies = [
+  "boto3>=1.35.11",
+  "httpx>=0.27.2",
+  "starlette>=0.38.4",
+]
+description = "Middleware to spill large responses over to S3."
+dynamic = ["version"]
+license = {file = "LICENSE"}
+maintainers = [
+  {name = "Anthony Lukach", email = "anthony@developmentseed.org"},
+]
+name = "asgi_s3_response_middleware"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+lint = [
+  "pre-commit",
+]
+testing = [
+  "boto3-stubs[s3]>=1.35.11",
+  "coverage",
+  "moto>=5.0.13",
+  "pytest",
+]
+
+[tool.pdm.version]
+path = "src/asgi_s3_response_middleware/__init__.py"
+source = "file"
+
+[tool.pdm.build]
+excludes = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
+includes = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.uv.workspace]
+members = ["example"]
+
+[tool.uv.sources]
+asgi-s3-response-middleware = {workspace = true}
