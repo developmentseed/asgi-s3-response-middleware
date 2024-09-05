@@ -3,4 +3,5 @@ import uuid
 
 
 def generate_s3_key() -> str:
-    return datetime.datetime.now().isoformat() + "-" + str(uuid.uuid4())
+    now = datetime.datetime.now(datetime.UTC)
+    return now.isoformat() + "-" + str(uuid.uuid4())
